@@ -344,6 +344,7 @@ class LearningAgent(IntelligentAgent):
         "One of ['stop', 'up', 'down', 'left', 'right']"
         "If there are more than one actions with max Q-value, randomly pick one. (use choice(actions))"
         "YOUR CODE HERE"
+        action = self.V[self.hash_state(state)]["action"]
         return action
 
     def will_move(self, valid, state):
@@ -353,6 +354,9 @@ class LearningAgent(IntelligentAgent):
         @valid is a function used to check if a position is valid.
         """
         "YOUR CODE HERE"
+        #action = self.best_of_state(state)
+        action = "right"
+        action_in_vector = self.possible_moves[action]
         return action_in_vector
 
 class ApproximateQLearningAgent(LearningAgent):
@@ -373,7 +377,7 @@ class ApproximateQLearningAgent(LearningAgent):
 
     def initialize(self):
         "Initialize this agent."
-        self.modelfilename = "ANY NAME YOU WANT" # replace this if you implement the save & load methods
+        self.modelfilename = "Q3.txt" # replace this if you implement the save & load methods
         "PLACE ANY INITIALIZATION CODE THAT YOU NEED HERE"
         "And you probably wanna initialize the data structure storing weights here."
         "You can use self.game.features() to get all the feature names."
@@ -385,6 +389,7 @@ class ApproximateQLearningAgent(LearningAgent):
         Inner product of weights and features is the desired Qvalue.
         """
         "YOUR CODE HERE"
+        Qvalue = 0
         return Qvalue
 
     def get_value(self, state):
@@ -393,6 +398,7 @@ class ApproximateQLearningAgent(LearningAgent):
         Max(a)[Q(s, a)]
         """
         "YOUR CODE HERE"
+        value = 0
         return value
 
     def updateWeights(self, diff, features):
