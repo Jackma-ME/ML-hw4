@@ -354,8 +354,7 @@ class LearningAgent(IntelligentAgent):
         @valid is a function used to check if a position is valid.
         """
         "YOUR CODE HERE"
-        #action = self.best_of_state(state)
-        action = "right"
+        action = self.best_of_state(state)
         action_in_vector = self.possible_moves[action]
         return action_in_vector
 
@@ -364,14 +363,14 @@ class ApproximateQLearningAgent(LearningAgent):
         "Load model file into this object."
         "It would be convenient if you save the policy into a file so that you don't need to plan again the next time you start a game."
         raise FileNotFoundError # !!remove this if you implement this method!!
-        with open(self.modelfilename, "rb") as f:
+        with open(self.modelfilename, "r") as f:
             "YOUR CODE HERE (OPTIONAL)"
             pass # !!remove this if you implement this method!!
 
     def save(self):
         "Save the policy into a model file."
         "It would be convenient if you save the policy into a file so that you don't need to plan again the next time you start a game."
-        with open(self.modelfilename, "wb") as f:
+        with open(self.modelfilename, "w") as f:
             "YOUR CODE HERE (OPTIONAL)"
             pass # !!remove this if you implement this method!!
 
@@ -381,6 +380,8 @@ class ApproximateQLearningAgent(LearningAgent):
         "PLACE ANY INITIALIZATION CODE THAT YOU NEED HERE"
         "And you probably wanna initialize the data structure storing weights here."
         "You can use self.game.features() to get all the feature names."
+        self.name = self.game.features()
+        self.w = {self.name[0] : 1, self.name[1] : 1, self.name[2] : 1, self.name[3]: 1}
 
     def get_Qvalue(self, state, action):
         "Evaluate the value of a Qstate Q(@state, @action)."
@@ -390,6 +391,9 @@ class ApproximateQLearningAgent(LearningAgent):
         """
         "YOUR CODE HERE"
         Qvalue = 0
+        f = self.game.features(state, action)
+        for i in range(len(self.name)):
+            Qvalue = Qvalue + self.w[self.name[i]]*f[self.name[i]]
         return Qvalue
 
     def get_value(self, state):
@@ -398,7 +402,10 @@ class ApproximateQLearningAgent(LearningAgent):
         Max(a)[Q(s, a)]
         """
         "YOUR CODE HERE"
-        value = 0
+        
+        #vms = self.valid_moves(state["ghost1_pos"], self.game.valid)
+        #ns = self.game.nextstate("sim_ghost_best_Q", param2 = state)
+        #value = ns["score"] - state["score"]
         return value
 
     def updateWeights(self, diff, features):
@@ -407,7 +414,8 @@ class ApproximateQLearningAgent(LearningAgent):
         new_W <- old_W + gamma x diff x features (NOTE: new_W, old_W, and features are vectors)
         """
         "YOUR CODE HERE"
-        pass # !!remove this if you implement this method!!
+        for i in range(len(self.name)):
+            self.w[self.name[i]] = self.w[self.name[i]] + self.alpha * diff * features[self.name[i]]
 
     def learn(self):
         "Learn the weights by actually playing the game."
@@ -424,4 +432,23 @@ class ApproximateQLearningAgent(LearningAgent):
             Initialize the game state
         """
         "YOUR CODE HERE"
+        for i in range(self.num_episodes):
+            while self.game.end_game() == 0:
+                s = self.game.state
+                a = self.best_of_state(s)
+                ran = uniform(0,1)
+                if ran < self.epsilon:
+                    vms = self.valid_moves(s["pacman_pos"], self.game.valid)
+                    action = choice(vms)
+                else:
+                    action = a
+                Qstate = self.game.nextstate("sim_pac", self.possible_moves[action])
+                ns = self.game.nextstate("sim_ghost_best_Q")
+                R = ns["score"] - s["score"]
+                diff = (R + self.gamma*self.get_value(ns)) - self.get_Qvalue(s,action)
+                fea = self.game.features(s,action)
+                self.updateWeights(diff,fea)
+                prrint(self,w)
+            self.game.initialize()
+        print("ok")
         self.save() # save the resulted weights into a file (optional)
