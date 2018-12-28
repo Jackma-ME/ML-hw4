@@ -11,10 +11,10 @@ def q1():
     try:
         for i in range(10):
             while g.end_game() == 0:
-                qs = g.nextstate("sim_pac", g.pacman.will_move(g.valid, g.nextstate), g.state)
+                qs = g.nextstate("sim_pac", g.pacman.will_move(g.valid, g.state), g.state)
                 g.pacman.position = qs["pacman_pos"]
                 g.state = qs
-                ns = g.nextstate("sim_ghost", g.ghosts[0].will_move(g.valid, g.nextstate), g.state)
+                ns = g.nextstate("sim_ghost", g.ghosts[0].will_move(g.valid, g.state), g.state)
                 g.ghosts[0].position = ns["ghost1_pos"]
                 g.state = ns
             if g.end_game() == 2:
@@ -35,10 +35,10 @@ def q2():
     try:
         for i in range(10):
             while g.end_game() == 0:
-                qs = g.nextstate("sim_pac", g.pacman.will_move(g.valid, g.nextstate), g.state)
+                qs = g.nextstate("sim_pac", g.pacman.will_move(g.valid, g.state), g.state)
                 g.pacman.position = qs["pacman_pos"]
                 g.state = qs
-                ns = g.nextstate("sim_ghost", g.ghosts[0].will_move(g.valid, g.nextstate), g.state)
+                ns = g.nextstate("sim_ghost", g.ghosts[0].will_move(g.valid, g.state), g.state)
                 g.ghosts[0].position = ns["ghost1_pos"]
                 g.state = ns
             if g.end_game() == 2:
@@ -59,7 +59,7 @@ def q3():
     try:
         for i in range(10):
             while g.end_game() == 0:
-                qs = g.nextstate("sim_pac", g.pacman.will_move(g.valid, g.nextstate))
+                qs = g.nextstate("sim_pac", g.pacman.will_move(g.valid, g.state))
                 g.pacman.position = qs["pacman_pos"]
                 ns = g.nextstate("sim_ghost_best_Q")
                 g.ghosts[0].position = ns["ghost1_pos"]
